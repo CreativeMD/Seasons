@@ -31,7 +31,7 @@ public class SeasonTransformer implements IClassTransformer {
 				classNode.accept(writer);
 				basicClass = writer.toByteArray();
 				
-				System.out.println("Patched something!");
+				System.out.println("Patched " + Transformer.transformers.get(i).className + " ...");
 				Transformer.transformers.get(i).done();
 			}else
 				i++;

@@ -2,6 +2,8 @@ package com.creativemd.seasons.season;
 
 import java.util.ArrayList;
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.event.terraingen.BiomeEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -55,18 +57,23 @@ public abstract class Season {
 	
 	public SeasonState getSeasonState(int days)
 	{
-		float percentage = days / (duration/4);
-		if(percentage > 3)
-			percentage = (1-(percentage-3))*0.5F+0.5F;
+		float intensity = days / (duration/4);
+		if(intensity > 3)
+			intensity = (1-(intensity-3))*0.5F+0.5F;
 		else
-			percentage = percentage*0.5F+0.5F;
-		return new SeasonState(this, days, Math.max(1, percentage));
+			intensity = intensity*0.5F+0.5F;
+		return new SeasonState(this, days, Math.max(1, intensity));
 	}
 	
 	public abstract float getTemperatureOffset(SeasonState state);
 	
+	public float getTemperature(SeasonState state, float original, BlockPos pos, Biome biome)
+	{
+		return original + getTemperatureOffset(state);
+	}
+	
 	/**default is 3**/
-	public abstract int getRandomTickSpeed(SeasonState state);
+	public abstract int getRandomTickSpeed(SeasonState state, int defaultTickSpeed);
 	
 	public abstract void onGrassColor(BiomeEvent.GetGrassColor event, SeasonState state);
 	

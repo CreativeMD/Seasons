@@ -14,11 +14,11 @@ public class WinterSeason extends Season {
 
 	@Override
 	public float getTemperatureOffset(SeasonState state) {
-		return -1.5F*state.percentage;
+		return -1.5F*state.intensity;
 	}
 
 	@Override
-	public int getRandomTickSpeed(SeasonState state) {
+	public int getRandomTickSpeed(SeasonState state, int defaultTickSpeed) {
 		return 0; //no ticks during winter
 	}
 

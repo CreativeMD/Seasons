@@ -1,16 +1,13 @@
 package com.creativemd.seasons.transformer;
 
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.DLOAD;
-import static org.objectweb.asm.Opcodes.FLOAD;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.RETURN;
+import static org.objectweb.asm.Opcodes.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -21,10 +18,23 @@ import com.creativemd.seasons.handler.SeasonBlockHandler;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSnow;
+import net.minecraft.world.biome.Biome;
 
 public abstract class Transformer {
 	
 	public static ArrayList<Transformer> transformers = new ArrayList<>();
+	
+	public int myfield;
+	
+	public void test()
+	{
+		test2(this, myfield);
+	}
+	
+	public static void test2(Transformer transformer, int field)
+	{
+		
+	}
 	
 	static {
 		new Transformer("net.minecraft.block.BlockSnow") {
@@ -47,9 +57,50 @@ public abstract class Transformer {
 				m.instructions.add(new InsnNode(RETURN));;
 			}
 		};
+		new Transformer("net.minecraft.world.biome.Biome") {
+			
+			@Override
+			public void transform(ClassNode node) {
+				String targetDesc = TransformerNames.patchDESC("(Lnet/minecraft/util/math/BlockPos;)F");
+				String targetMethod = TransformerNames.patchMethodName("getFloatTemperature", targetDesc, "net.minecraft.world.biome.Biome");
+				String newDesc = TransformerNames.patchDESC("(Lnet/minecraft/world/biome/Biome;Lnet/minecraft/util/math/BlockPos;)F");
+				MethodNode m = findMethod(node, targetMethod, targetDesc);
+				m.instructions.clear();
+				m.localVariables.clear();
+				
+				m.instructions.add(new VarInsnNode(ALOAD, 0));
+				m.instructions.add(new VarInsnNode(ALOAD, 1));
+				m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/creativemd/seasons/handler/SeasonBlockHandler", "getFloatTemperature", newDesc, false));
+				
+				
+				m.instructions.add(new InsnNode(FRETURN));
+			}
+		};
+		new Transformer("net.minecraft.world.WorldServer") {
+			
+			@Override
+			public void transform(ClassNode node) {
+				String targetDesc = TransformerNames.patchDESC("()V");
+				String targetMethod = TransformerNames.patchMethodName("updateBlocks", targetDesc, "net.minecraft.world.WorldServer");
+				String newDesc = TransformerNames.patchDESC("(Lnet/minecraft/world/WorldServer;Lnet/minecraft/server/management/PlayerChunkMap;)V");
+				MethodNode m = findMethod(node, targetMethod, targetDesc);
+				m.instructions.clear();
+				m.localVariables.clear();
+				
+				m.instructions.add(new VarInsnNode(ALOAD, 0));
+				m.instructions.add(new VarInsnNode(ALOAD, 0));
+				m.instructions.add(new FieldInsnNode(GETFIELD, TransformerNames.patchClassName("net/minecraft/world/WorldServer"), TransformerNames.patchFieldName("thePlayerManager", "net/minecraft/world/WorldServer"), TransformerNames.patchDESC("Lnet/minecraft/server/management/PlayerChunkMap;")));
+				m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/creativemd/seasons/handler/SeasonBlockHandler", "updateBlocks", newDesc, false));
+				
+				m.instructions.add(new InsnNode(RETURN));
+				
+				m.maxLocals = 1;
+				m.maxStack = 2;
+			}
+		};
 	}
 	
-	private String className;
+	public final String className;
 	
 	public Transformer(String className) {
 		transformers.add(this);

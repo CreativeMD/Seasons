@@ -84,9 +84,13 @@ public class TransformerNames {
 	
 	public static String patchFieldName(String fieldName, Class parent)
 	{
+		return patchFieldName(fieldName, patchClassName(parent.getName()));
+	}
+	
+	public static String patchFieldName(String fieldName, String parentName)
+	{
 		if(obfuscated)
 		{
-			String parentName = patchClassName(parent.getName());
 			for (int i = 0; i < fields.size(); i++)
 				if(fieldName.equals(fields.get(i).name) && parentName.equals(fields.get(i).parent))
 					return fields.get(i).obfname;
@@ -96,9 +100,13 @@ public class TransformerNames {
 	
 	public static String patchMethodName(String methodName, String desc, Class parent)
 	{
+		return patchMethodName(methodName, desc, patchClassName(parent.getName()));
+	}
+	
+	public static String patchMethodName(String methodName, String desc, String parentName)
+	{
 		if(obfuscated)
 		{
-			String parentName = patchClassName(parent.getName());
 			String obfdesc = patchDESC(desc);
 			for (int i = 0; i < methods.size(); i++)
 				if(methodName.equals(methods.get(i).name) && parentName.equals(methods.get(i).parent) && methods.get(i).desc.equals(obfdesc))

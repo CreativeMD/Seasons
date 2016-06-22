@@ -34,11 +34,13 @@ public class InvisibleLeave extends Block {
 	/**
      * The type of render function called. 3 for standard block models, 2 for TESR's, 1 for liquids, -1 is no render
      */
+	@Override
     public EnumBlockRenderType getRenderType(IBlockState state)
     {
         return EnumBlockRenderType.INVISIBLE;
     }
-
+    
+    @Override
     @Nullable
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
     {
@@ -48,11 +50,13 @@ public class InvisibleLeave extends Block {
     /**
      * Used to determine ambient occlusion and culling when rebuilding chunks for render
      */
+    @Override
     public boolean isOpaqueCube(IBlockState state)
     {
         return false;
     }
-
+    
+    @Override
     public boolean canCollideCheck(IBlockState state, boolean hitIfLiquid)
     {
         return false;
@@ -61,6 +65,7 @@ public class InvisibleLeave extends Block {
     /**
      * Spawns this Block's drops into the World as EntityItems.
      */
+    @Override
     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
     {
     }
@@ -68,14 +73,22 @@ public class InvisibleLeave extends Block {
     /**
      * Whether this Block can be replaced directly by other blocks (true for e.g. tall grass)
      */
+    @Override
     public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
     {
         return true;
     }
-
+    
+    @Override
     public boolean isFullCube(IBlockState state)
     {
         return false;
+    }
+    
+    @Override
+    public boolean isLeaves(IBlockState state, IBlockAccess world, BlockPos pos)
+    {
+        return true;
     }
 
 }
