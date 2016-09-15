@@ -2,7 +2,6 @@ package com.creativemd.seasons.season;
 
 import java.util.HashMap;
 
-import com.creativemd.creativecore.common.utils.ColorUtils;
 import com.creativemd.creativecore.utils.Graph;
 import com.creativemd.creativecore.utils.LinearGraph;
 
@@ -11,35 +10,35 @@ import net.minecraftforge.event.terraingen.BiomeEvent.GetFoliageColor;
 import net.minecraftforge.event.terraingen.BiomeEvent.GetGrassColor;
 import net.minecraftforge.event.terraingen.BiomeEvent.GetWaterColor;
 
-public class WinterSeason extends Season {
+public class SpringSeason extends Season {
 
-	public WinterSeason() {
-		super("season.winter", defaultSeasonDuration);
+	public SpringSeason() {
+		super("season.spring", defaultSeasonDuration);
 	}
 
 	@Override
 	public float getTemperatureOffset(SeasonState state) {
-		return -1.5F*state.intensity;
+		return 0;
 	}
 
 	@Override
 	public int getRandomTickSpeed(SeasonState state, int defaultTickSpeed) {
-		return 0; //no ticks during winter
+		return 5;
 	}
 
 	@Override
 	public void onGrassColor(GetGrassColor event, SeasonState state) {
-		event.setNewColor(ColorUtils.WHITE);
+		
 	}
 
 	@Override
 	public void onWaterColor(GetWaterColor event, SeasonState state) {
-		event.setNewColor(ColorUtils.WHITE);
+		
 	}
 
 	@Override
 	public void onFoliageColor(GetFoliageColor event, SeasonState state) {
-		event.setNewColor(ColorUtils.WHITE);
+		
 	}
 
 	@Override
@@ -50,10 +49,9 @@ public class WinterSeason extends Season {
 	@Override
 	public Graph getIntensityGraph() {
 		HashMap<Float, Float> points = new HashMap<>();
-		points.put(0F, 0.5F);
-		points.put(0.25F, 1F);
+		points.put(0F, 0.2F);
+		points.put(0.25F, 0.6F);
 		points.put(0.75F, 1F);
-		points.put(1F, 0.5F);
 		return new LinearGraph(points);
 	}
 

@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.creativemd.creativecore.utils.LinearGraph;
 import com.creativemd.seasons.block.InvisibleLeave;
 import com.creativemd.seasons.handler.SeasonBlockHandler;
 import com.creativemd.seasons.handler.SeasonEventHandler;
@@ -19,6 +20,7 @@ import com.google.common.eventbus.Subscribe;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSnow;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,7 +47,6 @@ public class SeasonDummyContainer  extends DummyModContainer implements WorldAcc
 	
 	public static final String modid = "seasons";
 	public static final String version = "0.1";
-	
 	
 	public SeasonDummyContainer() {
 		super(new ModMetadata());
@@ -81,7 +82,7 @@ public class SeasonDummyContainer  extends DummyModContainer implements WorldAcc
 	{
 		for (Block block : Block.REGISTRY) {
 			try{
-				if(block.isLeaves(block.getDefaultState(), null, null))
+				if(block.isLeaves(block.getDefaultState(), null, null) && !(block instanceof InvisibleLeave) && !leaves.containsKey(block))
 				{
 					InvisibleLeave leave = (InvisibleLeave) new InvisibleLeave(block).setUnlocalizedName("invisible" + block.getRegistryName().getResourcePath());
 					leaves.put(block, leave);
@@ -91,19 +92,24 @@ public class SeasonDummyContainer  extends DummyModContainer implements WorldAcc
 				
 			}
 		}
-		
 	}
 
 	@Override
 	public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info) {
-		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setInteger("days", Season.currentWorldDays);
-		return nbt;
+		NBTTagCompound days = new NBTTagCompound();
+		for (Integer dimID : Season.worldDays.keySet()) {
+			days.setLong("dID" + dimID.intValue(), Season.worldDays.get(dimID).longValue());
+		}
+		return days;
 	}
 
 	@Override
 	public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag) {
-		Season.currentWorldDays = tag.getInteger("days");
+		Season.worldDays = new HashMap<>();
+		for (String key : tag.getKeySet()) {
+			if(key.startsWith("dID"))
+				Season.worldDays.put(Integer.parseInt(key.replace("dID", "")), tag.getLong(key));
+		}
 	}
 
 }

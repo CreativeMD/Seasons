@@ -70,7 +70,7 @@ public abstract class Transformer {
 				
 				m.instructions.add(new VarInsnNode(ALOAD, 0));
 				m.instructions.add(new VarInsnNode(ALOAD, 1));
-				m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/creativemd/seasons/handler/SeasonBlockHandler", "getFloatTemperature", newDesc, false));
+				m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/creativemd/seasons/handler/SeasonBiomeHandler", "getFloatTemperature", newDesc, false));
 				
 				
 				m.instructions.add(new InsnNode(FRETURN));
@@ -90,7 +90,7 @@ public abstract class Transformer {
 				m.instructions.add(new VarInsnNode(ALOAD, 0));
 				m.instructions.add(new VarInsnNode(ALOAD, 0));
 				m.instructions.add(new FieldInsnNode(GETFIELD, TransformerNames.patchClassName("net/minecraft/world/WorldServer"), TransformerNames.patchFieldName("thePlayerManager", "net/minecraft/world/WorldServer"), TransformerNames.patchDESC("Lnet/minecraft/server/management/PlayerChunkMap;")));
-				m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/creativemd/seasons/handler/SeasonBlockHandler", "updateBlocks", newDesc, false));
+				m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/creativemd/seasons/handler/SeasonWorldHandler", "updateBlocks", newDesc, false));
 				
 				m.instructions.add(new InsnNode(RETURN));
 				
