@@ -69,7 +69,7 @@ public abstract class Season {
 	@SideOnly(Side.CLIENT)
 	public static SeasonState getCurrentStateInClientWorld()
 	{
-		return getCurrentState(Minecraft.getMinecraft().theWorld);
+		return getCurrentState(Minecraft.getMinecraft().world);
 	}
 	
 	public static SeasonState getCurrentState(World world)

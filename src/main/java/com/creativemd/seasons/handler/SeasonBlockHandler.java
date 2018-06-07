@@ -1,40 +1,15 @@
 package com.creativemd.seasons.handler;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Iterator;
 import java.util.Random;
 
-import com.creativemd.seasons.season.Season;
-import com.creativemd.seasons.season.SeasonState;
-
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockFire;
-import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.BlockSnow;
 import net.minecraft.block.BlockTNT;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.BlockModelShapes;
-import net.minecraft.entity.effect.EntityLightningBolt;
-import net.minecraft.entity.passive.EntityHorse;
-import net.minecraft.entity.passive.HorseType;
 import net.minecraft.init.Blocks;
-import net.minecraft.server.management.PlayerChunkMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
-import net.minecraft.world.gen.NoiseGeneratorPerlin;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 public class SeasonBlockHandler {
 	
@@ -63,7 +38,7 @@ public class SeasonBlockHandler {
         {
             state.getBlock().dropBlockAsItem(worldIn, pos, worldIn.getBlockState(pos), 0);
             worldIn.setBlockState(pos, Blocks.WATER.getDefaultState());
-            worldIn.notifyBlockOfStateChange(pos, Blocks.WATER);
+            worldIn.notifyNeighborsOfStateChange(pos, Blocks.WATER, true);
         }
     }
 	

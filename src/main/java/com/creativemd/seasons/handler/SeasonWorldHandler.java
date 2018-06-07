@@ -13,8 +13,7 @@ import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.effect.EntityLightningBolt;
-import net.minecraft.entity.passive.EntityHorse;
-import net.minecraft.entity.passive.HorseType;
+import net.minecraft.entity.passive.EntitySkeletonHorse;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.management.PlayerChunkMap;
 import net.minecraft.util.math.BlockPos;
@@ -99,12 +98,11 @@ private static Field updateLCG = null;
 	
 	                        if (world.rand.nextDouble() < (double)difficultyinstance.getAdditionalDifficulty() * 0.05D)
 	                        {
-	                            EntityHorse entityhorse = new EntityHorse(world);
-	                            entityhorse.setType(HorseType.SKELETON);
-	                            entityhorse.setSkeletonTrap(true);
+	                        	EntitySkeletonHorse entityhorse = new EntitySkeletonHorse(world);
+	                        	entityhorse.setTrap(true);
 	                            entityhorse.setGrowingAge(0);
 	                            entityhorse.setPosition((double)blockpos.getX(), (double)blockpos.getY(), (double)blockpos.getZ());
-	                            world.spawnEntityInWorld(entityhorse);
+	                            world.spawnEntity(entityhorse);
 	                            world.addWeatherEffect(new EntityLightningBolt(world, (double)blockpos.getX(), (double)blockpos.getY(), (double)blockpos.getZ(), true));
 	                        }
 	                        else
@@ -127,7 +125,7 @@ private static Field updateLCG = null;
 	                    BlockPos blockpos2 = blockpos1.down();
 	                    if (blockpos1.getY() >= 1 && blockpos1.getY() < 256)
 	                    {
-		                    Biome biome = world.getBiomeGenForCoords(blockpos2);
+		                    Biome biome = world.getBiome(blockpos2);
 		                    float temperature = biome.getFloatTemperature(blockpos2);
 		                    IBlockState state = world.getBlockState(blockpos1);
 		                    IBlockState stateDown = world.getBlockState(blockpos2);
@@ -204,7 +202,7 @@ private static Field updateLCG = null;
 	                                int i2 = j1 >> 16 & 15;
 	                                IBlockState iblockstate = extendedblockstorage.get(k1, i2, l1);
 	                                BlockPos pos = new BlockPos(k1 + j, i2 + extendedblockstorage.getYLocation(), l1 + k);
-	                                Biome biome = world.getBiomeGenForCoords(pos);
+	                                Biome biome = world.getBiome(pos);
 	    		                    float temperature = biome.getFloatTemperature(pos);
 	                                Block block = iblockstate.getBlock();
 	                                world.theProfiler.startSection("randomTick");
@@ -322,7 +320,7 @@ private static Field updateLCG = null;
 	
 	public static void updateWeatherBody(WorldServer world)
     {
-        if (!world.provider.getHasNoSky())
+        if (!world.provider.hasNoSky())
         {
             if (!world.isRemote)
             {
@@ -371,7 +369,7 @@ private static Field updateLCG = null;
                     world.thunderingStrength = (float)((double)world.thunderingStrength - 0.01D);
                 }
 
-                world.thunderingStrength = MathHelper.clamp_float(world.thunderingStrength, 0.0F, 1.0F);
+                world.thunderingStrength = MathHelper.clamp(world.thunderingStrength, 0.0F, 1.0F);
                 int k = world.getWorldInfo().getRainTime();
 
                 if (k <= 0)
@@ -407,7 +405,7 @@ private static Field updateLCG = null;
                     world.rainingStrength = (float)((double)world.rainingStrength - 0.01D);
                 }
 
-                world.rainingStrength = MathHelper.clamp_float(world.rainingStrength, 0.0F, 1.0F);
+                world.rainingStrength = MathHelper.clamp(world.rainingStrength, 0.0F, 1.0F);
             }
         }
     }

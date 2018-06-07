@@ -26,7 +26,7 @@ public class SeasonEventHandler {
 	public void onPlayerTick(PlayerTickEvent event)
 	{
 		if(event.phase == Phase.START)
-			lastWorld = event.player.worldObj;
+			lastWorld = event.player.world;
 		//else
 			//lastWorld = null;
 	}

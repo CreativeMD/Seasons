@@ -3,11 +3,10 @@ package com.creativemd.seasons;
 import java.io.File;
 import java.util.Map;
 
+import com.creativemd.creativecore.transformer.TransformerNames;
 import com.creativemd.seasons.transformer.SeasonTransformer;
-import com.creativemd.seasons.transformer.TransformerNames;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
-import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 
 public class SeasonPatchingLoader implements IFMLLoadingPlugin {
 	
