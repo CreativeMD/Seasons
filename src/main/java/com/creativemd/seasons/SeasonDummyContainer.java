@@ -22,6 +22,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -30,19 +31,24 @@ import net.minecraft.util.registry.RegistrySimple;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.WorldAccessContainer;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
+@EventBusSubscriber
 public class SeasonDummyContainer  extends DummyModContainer implements WorldAccessContainer {
 	
 	public static final String modid = "seasons";
@@ -77,21 +83,31 @@ public class SeasonDummyContainer  extends DummyModContainer implements WorldAcc
 		MinecraftForge.EVENT_BUS.register(new SeasonEventHandler());
 	}
 	
-	@Subscribe
-	public void postInit(FMLLoadCompleteEvent event)
-	{
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void registerBlocks(RegistryEvent.Register<Block> event) {
 		for (Block block : Block.REGISTRY) {
 			try{
 				if(block.isLeaves(block.getDefaultState(), null, null) && !(block instanceof InvisibleLeave) && !leaves.containsKey(block))
 				{
 					InvisibleLeave leave = (InvisibleLeave) new InvisibleLeave(block).setUnlocalizedName("invisible" + block.getRegistryName().getResourcePath());
 					leaves.put(block, leave);
-					GameRegistry.register(leave.setRegistryName("invisible" + block.getRegistryName().getResourcePath()));
+					event.getRegistry().register(leave.setRegistryName("invisible" + block.getRegistryName().getResourcePath()));
 				}
 			}catch(Exception e){
 				
 			}
 		}
+	}
+	
+	@SubscribeEvent
+	public static void registerItems(RegistryEvent.Register<Item> event) {
+		
+	}
+	
+	@Subscribe
+	public void postInit(FMLLoadCompleteEvent event)
+	{
+		
 	}
 
 	@Override

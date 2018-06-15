@@ -18,7 +18,7 @@ public class SeasonBlockHandler {
 		//Blocks.SNOW_LAYER
 		//int layers = ((Integer)state.getValue(BlockSnow.LAYERS)).intValue();
 		
-		float temperature = worldIn.getBiomeForCoordsBody(pos).getFloatTemperature(pos);
+		float temperature = worldIn.getBiomeForCoordsBody(pos).getTemperature(pos);
 		if(temperature > 0.75F)
 			worldIn.setBlockToAir(pos);
     }

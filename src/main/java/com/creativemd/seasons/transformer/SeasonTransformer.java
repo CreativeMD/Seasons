@@ -54,7 +54,7 @@ public class SeasonTransformer extends CreativeTransformer {
 			@Override
 			public void transform(ClassNode node) {
 				String targetDesc = TransformerNames.patchDESC("(Lnet/minecraft/util/math/BlockPos;)F");
-				String targetMethod = TransformerNames.patchMethodName("getFloatTemperature", targetDesc, "net.minecraft.world.biome.Biome");
+				String targetMethod = TransformerNames.patchMethodName("getTemperature", targetDesc, "net.minecraft.world.biome.Biome");
 				String newDesc = TransformerNames.patchDESC("(Lnet/minecraft/world/biome/Biome;Lnet/minecraft/util/math/BlockPos;)F");
 				MethodNode m = findMethod(node, targetMethod, targetDesc);
 				m.instructions.clear();
@@ -62,7 +62,7 @@ public class SeasonTransformer extends CreativeTransformer {
 				
 				m.instructions.add(new VarInsnNode(ALOAD, 0));
 				m.instructions.add(new VarInsnNode(ALOAD, 1));
-				m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/creativemd/seasons/handler/SeasonBiomeHandler", "getFloatTemperature", newDesc, false));
+				m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/creativemd/seasons/handler/SeasonBiomeHandler", "getTemperature", newDesc, false));
 				
 				
 				m.instructions.add(new InsnNode(FRETURN));
@@ -81,7 +81,7 @@ public class SeasonTransformer extends CreativeTransformer {
 				
 				m.instructions.add(new VarInsnNode(ALOAD, 0));
 				m.instructions.add(new VarInsnNode(ALOAD, 0));
-				m.instructions.add(new FieldInsnNode(GETFIELD, TransformerNames.patchClassName("net/minecraft/world/WorldServer"), TransformerNames.patchFieldName("thePlayerManager", "net/minecraft/world/WorldServer"), TransformerNames.patchDESC("Lnet/minecraft/server/management/PlayerChunkMap;")));
+				m.instructions.add(new FieldInsnNode(GETFIELD, TransformerNames.patchClassName("net/minecraft/world/WorldServer"), TransformerNames.patchFieldName("playerChunkMap", "net/minecraft/world/WorldServer"), TransformerNames.patchDESC("Lnet/minecraft/server/management/PlayerChunkMap;")));
 				m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/creativemd/seasons/handler/SeasonWorldHandler", "updateBlocks", newDesc, false));
 				
 				m.instructions.add(new InsnNode(RETURN));

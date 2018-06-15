@@ -46,12 +46,12 @@ private static Field updateLCG = null;
     {
 		try{
 			if(playerCheckLight == null)
-				playerCheckLight = ReflectionHelper.findMethod(WorldServer.class, null, new String[]{"playerCheckLight"});
+				playerCheckLight = ReflectionHelper.findMethod(WorldServer.class, "playerCheckLight", "playerCheckLight");
 			playerCheckLight.invoke(world);
 			
 			Field updateLCG = getUpdateLCG();
 	
-	        if (world.getWorldInfo().getTerrainType() == WorldType.DEBUG_WORLD)
+	        if (world.getWorldInfo().getTerrainType() == WorldType.DEBUG_ALL_BLOCK_STATES)
 	        {
 	            Iterator<Chunk> iterator1 = playerManager.getChunkIterator();
 	
@@ -68,19 +68,19 @@ private static Field updateLCG = null;
 	            
 	            boolean isRaining = world.isRaining();
 	            boolean isThundering = world.isThundering();
-	            world.theProfiler.startSection("pollingChunks");
+	            world.profiler.startSection("pollingChunks");
 	
-	            for (Iterator<Chunk> iterator = world.getPersistentChunkIterable(playerManager.getChunkIterator()); iterator.hasNext(); world.theProfiler.endSection())
+	            for (Iterator<Chunk> iterator = world.getPersistentChunkIterable(playerManager.getChunkIterator()); iterator.hasNext(); world.profiler.endSection())
 	            {
-	                world.theProfiler.startSection("getChunk");
+	                world.profiler.startSection("getChunk");
 	                Chunk chunk = (Chunk)iterator.next();
-	                int j = chunk.xPosition * 16;
-	                int k = chunk.zPosition * 16;
-	                world.theProfiler.endStartSection("checkNextLight");
+	                int j = chunk.x * 16;
+	                int k = chunk.z * 16;
+	                world.profiler.endStartSection("checkNextLight");
 	                chunk.enqueueRelightChecks();
-	                world.theProfiler.endStartSection("tickChunk");
+	                world.profiler.endStartSection("tickChunk");
 	                chunk.onTick(false);
-	                world.theProfiler.endStartSection("thunder");
+	                world.profiler.endStartSection("thunder");
 	
 	                if (world.provider.canDoLightning(chunk) && isRaining && isThundering && world.rand.nextInt(100000) == 0)
 	                {
@@ -89,7 +89,7 @@ private static Field updateLCG = null;
 	                    //world.updateLCG = world.updateLCG * 3 + 1013904223;
 	                    int l = updateLCG.getInt(world) >> 2;
 			            if(adjustPosToNearbyEntity == null)
-			            	adjustPosToNearbyEntity = ReflectionHelper.findMethod(WorldServer.class, null, new String[]{"adjustPosToNearbyEntity"}, BlockPos.class);
+			            	adjustPosToNearbyEntity = ReflectionHelper.findMethod(WorldServer.class, "adjustPosToNearbyEntity", "adjustPosToNearbyEntity", BlockPos.class);
 	                    BlockPos blockpos = (BlockPos) adjustPosToNearbyEntity.invoke(world, new BlockPos(j + (l & 15), 0, k + (l >> 8 & 15)));
 	
 	                    if (world.isRainingAt(blockpos))
@@ -112,7 +112,7 @@ private static Field updateLCG = null;
 	                    }
 	                }
 	
-	                world.theProfiler.endStartSection("iceandsnow");
+	                world.profiler.endStartSection("iceandsnow");
 	                
 	                Blocks.SNOW.setTickRandomly(true);
 	                
@@ -126,7 +126,7 @@ private static Field updateLCG = null;
 	                    if (blockpos1.getY() >= 1 && blockpos1.getY() < 256)
 	                    {
 		                    Biome biome = world.getBiome(blockpos2);
-		                    float temperature = biome.getFloatTemperature(blockpos2);
+		                    float temperature = biome.getTemperature(blockpos2);
 		                    IBlockState state = world.getBlockState(blockpos1);
 		                    IBlockState stateDown = world.getBlockState(blockpos2);
 		                    
@@ -182,13 +182,13 @@ private static Field updateLCG = null;
 	                    }
 	                }
 	
-	                world.theProfiler.endStartSection("tickBlocks");
+	                world.profiler.endStartSection("tickBlocks");
 	
 	                if (randomTickSpeed > 0)
 	                {
 	                    for (ExtendedBlockStorage extendedblockstorage : chunk.getBlockStorageArray())
 	                    {
-	                        if (extendedblockstorage != Chunk.NULL_BLOCK_STORAGE && extendedblockstorage.getNeedsRandomTick())
+	                        if (extendedblockstorage != Chunk.NULL_BLOCK_STORAGE && extendedblockstorage.needsRandomTick())
 	                        {
 	                            for (int i1 = 0; i1 < randomTickSpeed; ++i1)
 	                            {
@@ -203,9 +203,9 @@ private static Field updateLCG = null;
 	                                IBlockState iblockstate = extendedblockstorage.get(k1, i2, l1);
 	                                BlockPos pos = new BlockPos(k1 + j, i2 + extendedblockstorage.getYLocation(), l1 + k);
 	                                Biome biome = world.getBiome(pos);
-	    		                    float temperature = biome.getFloatTemperature(pos);
+	    		                    float temperature = biome.getTemperature(pos);
 	                                Block block = iblockstate.getBlock();
-	                                world.theProfiler.startSection("randomTick");
+	                                world.profiler.startSection("randomTick");
 	
 	                                if (block.getTickRandomly())
 	                                {
@@ -216,14 +216,14 @@ private static Field updateLCG = null;
 	                            			world.setBlockToAir(pos);
 	                                }
 	
-	                                world.theProfiler.endSection();
+	                                world.profiler.endSection();
 	                            }
 	                        }
 	                    }
 	                }
 	            }
 	
-	            world.theProfiler.endSection();
+	            world.profiler.endSection();
 	        }
 		}catch(Exception e){
 			e.printStackTrace();
@@ -320,7 +320,7 @@ private static Field updateLCG = null;
 	
 	public static void updateWeatherBody(WorldServer world)
     {
-        if (!world.provider.hasNoSky())
+        if (!world.provider.hasSkyLight())
         {
             if (!world.isRemote)
             {
